@@ -2,3 +2,9 @@ prediction stream: null
 server ip: 0.0.0.0
 server port: 24600
 ui port: 24601
+
+# P2P Networking Mode
+# Options: central (default), hybrid (P2P with central fallback), p2p (pure P2P)
+# hybrid: Recommended for migration - uses P2P for peer communication with central server as fallback
+# p2p: Pure P2P mode - fully decentralized, no central server dependency
+networking mode: central
