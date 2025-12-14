@@ -29,6 +29,23 @@ wget -P ~/ https://stage.satorinet.io/static/download/windows/windows.zip
 ### 2. Configure Ports
 Edit `config\config.yaml` to set your desired Server and UI ports (default: 24600, 24601).
 
+### 2b. Configure Networking Mode (Optional)
+Edit `config\config.yaml` to set your networking mode:
+
+```yaml
+# P2P Networking Mode
+# Options: central (default), hybrid, p2p
+networking mode: central
+```
+
+| Mode | Description |
+|------|-------------|
+| `central` | All traffic through central servers (default, most stable) |
+| `hybrid` | P2P with central fallback (recommended for testing P2P) |
+| `p2p` | Pure P2P, no central server dependency |
+
+See the [satorip2p documentation](https://github.com/SatoriNetwork/satorip2p) for more details.
+
 ### 3. Add Wallet (Optional)
 Place your `wallet.yaml` and `vault.yaml` files into the `wallet` folder if you have an existing wallet.
 
