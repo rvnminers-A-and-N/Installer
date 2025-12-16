@@ -13,6 +13,17 @@ services:
       - ~/satori/mac/models:/Satori/Neuron/models
     environment:
       - ENV=prod
+      # P2P Networking Mode: central, hybrid, or p2p
+      # - SATORI_NETWORKING_MODE=central
+      # Oracle Configuration (Advanced - for oracle operators)
+      # - SATORI_ORACLE_ENABLED=false
+      # - SATORI_ORACLE_STREAMS=
+      # Prediction Protocol Settings
+      # - SATORI_PREDICTION_AUTO_REVEAL=true
+      # - SATORI_PREDICTION_COMMIT_BUFFER=60
+      # Reward Configuration
+      # - SATORI_REWARD_AUTO_CLAIM=true
+      # - SATORI_REWARD_THRESHOLD=10
     # deploy: # change or remove as desired 
     #   resources: # this limits the resources
     #     limits:

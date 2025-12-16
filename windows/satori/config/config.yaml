@@ -8,3 +8,28 @@ ui port: 24601
 # hybrid: Recommended for migration - uses P2P for peer communication with central server as fallback
 # p2p: Pure P2P mode - fully decentralized, no central server dependency
 networking mode: central
+
+# Oracle Configuration (Advanced)
+# Enable this to run as an oracle that publishes observation data to the network
+oracle:
+  enabled: false              # Set true to run as oracle
+  streams: []                 # Stream IDs to provide observations for
+  data_sources: []            # Data source configurations
+    # Example:
+    # - name: "binance"
+    #   api_key: ""
+    #   streams: ["btc-usd-1h"]
+  stake_amount: 1000          # SATORI to stake as oracle (minimum requirement)
+
+# Prediction Protocol Settings
+# Controls how predictions are submitted in P2P/hybrid mode
+predictions:
+  auto_reveal: true           # Automatically reveal predictions after observation
+  commit_buffer_seconds: 60   # Submit commit this many seconds before deadline
+
+# Reward Configuration
+# Controls how mining rewards are claimed
+rewards:
+  auto_claim: true            # Automatically claim rewards when available
+  claim_threshold: 10         # Minimum SATORI to trigger claim
+  claim_address: ""           # Override reward address (default: vault address)

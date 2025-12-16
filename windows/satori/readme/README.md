@@ -46,6 +46,50 @@ networking mode: central
 
 See the [satorip2p documentation](https://github.com/SatoriNetwork/satorip2p) for more details.
 
+### 2c. Oracle Configuration (Advanced)
+
+If you want to run as an **oracle** (data provider) for the network, configure the oracle section in `config\config.yaml`:
+
+```yaml
+oracle:
+  enabled: true                # Set true to run as oracle
+  streams:                     # Stream IDs to provide observations for
+    - "your-stream-id"
+  data_sources:                # Data source configurations
+    - name: "binance"
+      api_key: "your-api-key"
+      streams: ["btc-usd-1h"]
+  stake_amount: 1000           # SATORI to stake as oracle (minimum requirement)
+```
+
+**Requirements for running as an oracle:**
+- Minimum stake of 1000 SATORI
+- Reliable uptime and connectivity
+- Access to data sources you want to provide
+
+### 2d. Prediction Protocol Settings (Optional)
+
+Fine-tune prediction behavior in `config\config.yaml`:
+
+```yaml
+predictions:
+  auto_reveal: true           # Automatically reveal predictions after observation
+  commit_buffer_seconds: 60   # Submit commit this many seconds before deadline
+```
+
+These settings control the commit-reveal mechanism used in P2P/hybrid mode to prevent prediction copying.
+
+### 2e. Reward Configuration (Optional)
+
+Configure reward claiming behavior in `config\config.yaml`:
+
+```yaml
+rewards:
+  auto_claim: true            # Automatically claim rewards when available
+  claim_threshold: 10         # Minimum SATORI to trigger claim
+  claim_address: ""           # Override reward address (default: vault address)
+```
+
 ### 3. Add Wallet (Optional)
 Place your `wallet.yaml` and `vault.yaml` files into the `wallet` folder if you have an existing wallet.
 
