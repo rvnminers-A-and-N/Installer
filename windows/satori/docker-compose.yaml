@@ -1,42 +1,129 @@
+# =============================================================================
+# Satori Network - Docker Compose Configuration
+# =============================================================================
+#
+# This runs a Satori neuron that participates in the decentralized AI network.
+#
+# NETWORKING MODES:
+#   Set in config/config.yaml or via environment variable:
+#   - central: Legacy mode, connects to central server (default)
+#   - hybrid:  P2P with central fallback (RECOMMENDED)
+#   - p2p:     Pure P2P, fully decentralized
+#
+# QUICK START:
+#   docker-compose up -d
+#   # Then visit http://localhost:24601
+#
+# =============================================================================
+
 version: '3.8'
 
 services:
   satori:
-    image: satorinet/satorineuron:p2p
-    container_name: satorineuron
+    # Use satori-lite (self-contained lightweight neuron)
+    image: satorinet/satori-lite:latest
+    container_name: satori
+
+    # Restart policy
     restart: unless-stopped
+
+    # Host networking for P2P (required for proper NAT traversal)
     network_mode: "host"
+
+    # Mount points for persistent data
     volumes:
-      # For Windows, you can also use use absolute paths with drive letter and properly escaped back slashes
-      # Old Location
-      #- ${APPDATA}/local/Satori/config:/Satori/Neuron/config
-      #- ${APPDATA}/local/Satori/wallet:/Satori/Neuron/wallet
-      #- ${APPDATA}/local/Satori/data:/Satori/Neuron/data
-      #- ${APPDATA}/local/Satori/models:/Satori/Neuron/models
-      # New Loation
-      - ${HOME}/satori/config:/Satori/Neuron/config
-      - ${HOME}/satori/wallet:/Satori/Neuron/wallet
-      - ${HOME}/satori/data:/Satori/Neuron/data
-      - ${HOME}/satori/models:/Satori/Neuron/models
+      # Configuration
+      - ~/.satori/config:/root/.satori/config
+      - ./config:/Satori/Neuron/config
+
+      # Wallet (important: backup this!)
+      - ~/.satori/wallet:/root/.satori/wallet
+
+      # Data and models
+      - ~/.satori/data:/root/.satori/data
+      - ~/.satori/models:/root/.satori/models
+
+      # Streams configuration (oracle data sources)
+      - ./streams.yaml:/Satori/Streams/config.yaml:ro
+
+    # Environment configuration
     environment:
+      # Runtime environment
       - ENV=prod
-      # P2P Networking Mode: central, hybrid, or p2p
-      # - SATORI_NETWORKING_MODE=central
-      # Oracle Configuration (Advanced - for oracle operators)
-      # - SATORI_ORACLE_ENABLED=false
-      # - SATORI_ORACLE_STREAMS=
-      # Prediction Protocol Settings
+
+      # =========================================================================
+      # NETWORKING MODE - Choose one:
+      # =========================================================================
+      # - SATORI_NETWORKING_MODE=central  # Legacy (connects to server)
+      # - SATORI_NETWORKING_MODE=hybrid   # P2P + fallback (RECOMMENDED)
+      # - SATORI_NETWORKING_MODE=p2p      # Pure P2P (fully decentralized)
+      - SATORI_NETWORKING_MODE=hybrid
+
+      # =========================================================================
+      # STREAMS (Oracle Data Sources)
+      # =========================================================================
+      # Enable to run oracle streams (publish observations)
+      # - SATORI_STREAMS_ENABLED=true
+
+      # =========================================================================
+      # Optional: Advanced Configuration
+      # =========================================================================
+      # Prediction auto-reveal
       # - SATORI_PREDICTION_AUTO_REVEAL=true
       # - SATORI_PREDICTION_COMMIT_BUFFER=60
-      # Reward Configuration
+
+      # Reward auto-claim
       # - SATORI_REWARD_AUTO_CLAIM=true
       # - SATORI_REWARD_THRESHOLD=10
-    # deploy: # change or remove as desired 
-    #   resources: # this limits the resources
+
+    # Resource limits (adjust based on your system)
+    # deploy:
+    #   resources:
     #     limits:
-    #       cpus: "1.3"
-    #       memory: "3.5g"
+    #       cpus: "2.0"
+    #       memory: "4g"
+
+    # Interactive mode (for debugging)
     stdin_open: true
     tty: true
+
+    # Always pull latest image
     pull_policy: always
-    entrypoint: ["bash", "/Satori/Neuron/satorineuron/web/start.sh"]
+
+    # Health check
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:24601/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+    # Startup command
+    entrypoint: ["python", "/Satori/Neuron/start.py"]
+
+# =============================================================================
+# NOTES:
+# =============================================================================
+#
+# 1. First Run:
+#    - Visit http://localhost:24601 to set up your wallet
+#    - Your wallet will be created in ~/.satori/wallet
+#    - BACK UP YOUR WALLET! It contains your private keys.
+#
+# 2. Changing Modes:
+#    - Edit SATORI_NETWORKING_MODE above
+#    - Or edit config/config.yaml: "networking mode: hybrid"
+#    - Restart: docker-compose restart
+#
+# 3. Running as Oracle:
+#    - Edit streams.yaml to configure your data sources
+#    - Enable desired streams in the config
+#    - Oracles earn rewards for providing accurate data
+#
+# 4. Logs:
+#    docker-compose logs -f satori
+#
+# 5. Shell Access:
+#    docker-compose exec satori bash
+#
+# =============================================================================

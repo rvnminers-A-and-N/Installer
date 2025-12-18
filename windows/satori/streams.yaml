@@ -1,0 +1,107 @@
+# =============================================================================
+# Satori Streams Configuration
+# =============================================================================
+#
+# Oracle data streams that fetch external data and publish observations.
+# Enable the streams you want to run as an oracle.
+#
+# IMPORTANT: Running as an oracle requires staking SATORI tokens.
+# Oracles earn rewards for providing accurate, timely data.
+#
+# =============================================================================
+
+# Master enable/disable for all streams
+enabled: false  # Set to true to enable oracle mode
+
+# Oracle configurations
+oracles:
+
+  # ===========================================================================
+  # CRYPTOCURRENCY PRICES (No API key required)
+  # ===========================================================================
+
+  - type: crypto
+    name: Bitcoin Price USD
+    stream_id: crypto|satori|BTC|USD
+    enabled: false
+    poll_interval: 300  # 5 minutes
+    extra:
+      coin: bitcoin
+      currency: usd
+      source: coingecko
+
+  - type: crypto
+    name: Ethereum Price USD
+    stream_id: crypto|satori|ETH|USD
+    enabled: false
+    poll_interval: 300
+    extra:
+      coin: ethereum
+      currency: usd
+
+  - type: crypto
+    name: Evrmore Price USD
+    stream_id: crypto|satori|EVR|USD
+    enabled: false
+    poll_interval: 600  # 10 minutes
+    extra:
+      coin: evrmore
+      currency: usd
+
+  # ===========================================================================
+  # FRED - Federal Reserve Economic Data
+  # Get API key at: https://fred.stlouisfed.org/docs/api/api_key.html
+  # ===========================================================================
+
+  - type: fred
+    name: 10-Year Treasury Rate
+    stream_id: fred|satori|DGS10|rate
+    enabled: false
+    poll_interval: 3600  # 1 hour
+    # api_key: YOUR_FRED_API_KEY  # Or set FRED_API_KEY env var
+    extra:
+      series_id: DGS10
+
+  - type: fred
+    name: Federal Funds Rate
+    stream_id: fred|satori|FEDFUNDS|rate
+    enabled: false
+    poll_interval: 3600
+    extra:
+      series_id: FEDFUNDS
+
+  # ===========================================================================
+  # CUSTOM HTTP ENDPOINTS
+  # For any JSON API endpoint
+  # ===========================================================================
+
+  # Example: Custom sensor data
+  # - type: http
+  #   name: My Temperature Sensor
+  #   stream_id: sensors|myname|temperature|home
+  #   enabled: false
+  #   poll_interval: 300
+  #   extra:
+  #     url: http://my-sensor.local/api/reading
+  #     json_path: data.temperature
+
+# =============================================================================
+# HOW TO ADD YOUR OWN ORACLE:
+# =============================================================================
+#
+# 1. Choose a unique stream_id: "source|author|stream|target"
+#    - source: Where the data comes from (e.g., "sensors", "exchange")
+#    - author: Your identifier (e.g., your username)
+#    - stream: What's being measured (e.g., "temperature", "price")
+#    - target: Specific target (e.g., "home", "BTC")
+#
+# 2. Configure the data source:
+#    - type: http (for any JSON API)
+#    - extra.url: The API endpoint
+#    - extra.json_path: Path to the value in the JSON response
+#
+# 3. Set enabled: true and restart the container
+#
+# 4. Stake SATORI to become an active oracle
+#
+# =============================================================================
